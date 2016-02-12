@@ -1,11 +1,33 @@
 import java.util.HashMap;
-
+import java.util.Map;
 import spark.ModelAndView;
 import spark.template.velocity.VelocityTemplateEngine;
 import static spark.Spark.*;
 
 public class Allergies {
     public static void main(String[] args) {
+      String layout = "templates/layout.vtl";
+
+      get("/", (request, response) -> {
+        Map<String, Object> model = new HashMap<String, Object>();
+        model.put("template", "templates/home.vtl");
+        return new ModelAndView(model, layout);
+      }, new VelocityTemplateEngine());
+
+      get("/return", (request, response) -> {
+      Map<String, Object> model = new HashMap<String, Object>();
+      model.put("template", "templates/return.vtl");
+
+      String stringCoins= request.queryParams("userInput");
+      Integer coins = Integer.parseInt(stringCoins);
+
+      String change;
+      change = checkAllergies(coins);
+
+      model.put("userInput", change);
+      return new ModelAndView(model, layout);
+    }, new VelocityTemplateEngine());
+
     }
 
     public static String checkAllergies(Integer userInput) {
@@ -18,48 +40,76 @@ public class Allergies {
       int shellfish = 0;
       int peanuts = 0;
       int eggs = 0;
-      String noPenny = "";
+      String noAllergies = "";
 
       while (userInput > 0) {
        if (userInput >= 128){
          userInput -= 128;
          cats++;
-       } else if (userInput >= 10){
-         userInput -= 10;
-         dimes++;
-       } else if (userInput >= 5) {
-         userInput -= 5;
-         nickels++;
+       } else if (userInput >= 64){
+         userInput -= 64;
+         pollen++;
+       } else if (userInput >= 32) {
+         userInput -= 32;
+         chocolate++;
+       } else if (userInput >= 16) {
+         userInput -= 16;
+         tomatoes++;
+       } else if (userInput >= 8) {
+         userInput -= 8;
+         strawberries++;
+       } else if (userInput >= 4) {
+         userInput -= 4;
+         shellfish++;
+       } else if (userInput >= 2) {
+         userInput -= 2;
+         peanuts++;
        } else if (userInput >= 1) {
          userInput -= 1;
-         pennies++;
+         eggs++;
+
+
+
+
        }else {
          userInput = 0;
-         noPenny = "no more money";
+         noAllergies = "no allergies";
        }
     }
        String catsReturn = "";
-       String dimeReturn= "";
-       String nickelReturn="";
-       String pennyReturn="";
+       String pollenReturn= "";
+       String chocolateReturn="";
+       String tomatoesReturn="";
+       String strawberriesReturn="";
+       String shellfishReturn="";
+       String peanutsReturn="";
+       String eggsReturn="";
 
        if (cats > 0) {
          catsReturn = ("cats");
        }
-       if (dimes > 0) {
-         dimeReturn = " " + dimes + " dimes";
+       if (pollen > 0) {
+         pollenReturn = " " + "pollen";
        }
-       if (nickels > 0) {
-         nickelReturn = " " + nickels + " nickels";
-
+       if (chocolate > 0) {
+         chocolateReturn = " " + "chocolate";
        }
-       if (pennies > 0) {
-         pennyReturn = " " + pennies + " pennies";
+       if (tomatoes > 0) {
+         tomatoesReturn = " " + "tomatoes";
+       }
+       if (strawberries > 0) {
+         strawberriesReturn = " " + "strawberries";
+       }
+       if (shellfish > 0) {
+         shellfishReturn = " " + "shellfish";
+       }
+       if (peanuts > 0) {
+         peanutsReturn = " " + "peanuts";
+       }
+       if (eggs > 0) {
+         eggsReturn = " " + "eggs";
        }
 
-
-
-       return result =  String.format("%s%s%s%s", quarterReturn, dimeReturn, nickelReturn, pennyReturn);
+       return result =  String.format("%s%s%s%s%s%s%s%s", catsReturn, pollenReturn, chocolateReturn, tomatoesReturn, strawberriesReturn, shellfishReturn, peanutsReturn, eggsReturn);
      }
     }
-}
